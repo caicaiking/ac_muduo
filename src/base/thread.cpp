@@ -7,6 +7,7 @@
 #include <sys/syscall.h>
 #include "current_thead.h"
 #include <sys/prctl.h>
+#include <cassert>
 #include "exception.h"
 
 

@@ -23,6 +23,5 @@ int main() {
     t2.start();
     std::cout<< t2.name() << std::endl;
     t2.join();
-
     return 0;
 }

@@ -12,7 +12,7 @@ namespace ac_muduo {
 
     class exception : public std::exception {
     public:
-        exception(string what);
+        explicit exception(string what);
 
         ~exception() noexcept override = default;
 
