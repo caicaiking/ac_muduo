@@ -33,9 +33,10 @@ namespace ac_muduo {
         bool is_debug_build();
 
         string host_name();
+
         string proc_name();
 
-        string_piece proc_name(const string& stat);
+        string_piece proc_name(const string &stat);
 
         string proc_status();
 
@@ -49,14 +50,13 @@ namespace ac_muduo {
 
         int max_open_files();
 
-        struct cpu_time_t
-        {
+        struct cpu_time_t {
             double user_seconds;
             double system_seconds;
 
-            cpu_time_t(): user_seconds(.0), system_seconds(0.0){}
-            double total() const
-            {
+            cpu_time_t() : user_seconds(.0), system_seconds(0.0) {}
+
+            double total() const {
                 return this->user_seconds + this->system_seconds;
             }
         };
@@ -64,6 +64,7 @@ namespace ac_muduo {
         cpu_time_t cpu_time();
 
         int num_thread();
+
         std::vector<pid_t> threads();
     }
 
