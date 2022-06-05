@@ -21,39 +21,35 @@ namespace ac_muduo {
         explicit timestamp(int64_t micro_seconds_since_epoch_arg) :
                 micro_seconds_since_epoch_(micro_seconds_since_epoch_arg) {}
 
-                void swap(timestamp & that)
-                {
+        void swap(timestamp &that) {
             std::swap(this->micro_seconds_since_epoch_, that.micro_seconds_since_epoch_);
-                }
+        }
 
-                string to_string() const;
-        string to_formatted_string(bool show_micro_seconds= true) const;
+        string to_string() const;
 
-        bool valid() const {return this->micro_seconds_since_epoch_ > 0;}
+        string to_formatted_string(bool show_micro_seconds = true) const;
 
-        int64_t micro_seconds_since_epoch() const
-        {
+        bool valid() const { return this->micro_seconds_since_epoch_ > 0; }
+
+        int64_t micro_seconds_since_epoch() const {
             return this->micro_seconds_since_epoch_;
         }
 
-        time_t seconds_since_epoch() const
-        {
+        time_t seconds_since_epoch() const {
             return static_cast<time_t>(this->micro_seconds_since_epoch_ / k_micro_seconds_per_second);
         }
 
         static timestamp now();
-        static timestamp invalid()
-        {
+
+        static timestamp invalid() {
             return timestamp();
         }
 
-        static timestamp from_unix_time(time_t t, int microseconds)
-        {
+        static timestamp from_unix_time(time_t t, int microseconds) {
             return timestamp(static_cast<int64_t>(t) * k_micro_seconds_per_second + microseconds);
         }
 
-        static timestamp from_unix_time(time_t t)
-        {
+        static timestamp from_unix_time(time_t t) {
             return from_unix_time(t, 0);
         }
 
@@ -62,24 +58,20 @@ namespace ac_muduo {
         int64_t micro_seconds_since_epoch_;
     };
 
-    inline bool operator<(timestamp lhs, timestamp rhs)
-    {
+    inline bool operator<(timestamp lhs, timestamp rhs) {
         return lhs.micro_seconds_since_epoch() < rhs.micro_seconds_since_epoch();
     }
 
-    inline bool operator==(timestamp lhs, timestamp rhs)
-    {
+    inline bool operator==(timestamp lhs, timestamp rhs) {
         return lhs.micro_seconds_since_epoch() == rhs.micro_seconds_since_epoch();
     }
 
-    inline double time_difference(timestamp high, timestamp low)
-    {
+    inline double time_difference(timestamp high, timestamp low) {
         int64_t diff = high.micro_seconds_since_epoch() - low.micro_seconds_since_epoch();
-        return static_cast<double>(diff)/timestamp::k_micro_seconds_per_second;
+        return static_cast<double>(diff) / timestamp::k_micro_seconds_per_second;
     }
 
-    inline timestamp add_time(timestamp t, double  seconds)
-    {
+    inline timestamp add_time(timestamp t, double seconds) {
         int64_t delta = static_cast<int64_t>(seconds * timestamp::k_micro_seconds_per_second);
         return timestamp(t.micro_seconds_since_epoch() + delta);
     }
