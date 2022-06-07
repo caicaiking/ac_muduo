@@ -21,6 +21,7 @@ namespace ac_muduo {
     void current_thread::cache_tid() {
         if (t_cached_tid_ == 0) {
             t_cached_tid_ = detail::get_tid();
+            t_tid_string_length = snprintf(t_tid_string, sizeof t_tid_string, "%5d ", t_cached_tid_);
         }
     }
 

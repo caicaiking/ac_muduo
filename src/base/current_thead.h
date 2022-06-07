@@ -12,6 +12,8 @@ namespace ac_muduo {
     namespace current_thread {
         extern __thread int t_cached_tid_;
         extern __thread const char *t_thread_name_;
+        extern __thread char t_tid_string[32];
+        extern __thread int t_tid_string_length;
 
         void cache_tid();
 
@@ -21,6 +23,14 @@ namespace ac_muduo {
             }
 
             return t_cached_tid_;
+        }
+
+        inline const char *tid_string() {
+            return t_tid_string;
+        }
+
+        inline int tid_string_length() {
+            return t_tid_string_length;
         }
 
         bool is_main_thread();

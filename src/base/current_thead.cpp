@@ -11,7 +11,8 @@ namespace ac_muduo {
     namespace current_thread {
         __thread int t_cached_tid_ = 0;
         __thread const char *t_thread_name_ = "unknown";
-
+        __thread char t_tid_string[32];
+        __thread int t_tid_string_length;
 
         string stack_trace(bool demangle) {
             string stack;

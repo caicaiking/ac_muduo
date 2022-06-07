@@ -160,42 +160,39 @@ namespace ac_muduo {
         template<class T>
         void format_integer(T);
 
-        buffer_t buffer_;
+        buffer_t buffer_{};
         static const int k_max_numeric_size = 48;
     };
 
-    class fmt
-    {
+    class fmt {
     public:
         template<class T>
-                fmt(const char*fmt_str, T val);
+        fmt(const char *fmt_str, T val);
 
-        const char* data() const
-        {
+        const char *data() const {
             return this->buf_;
         }
 
-        int length() const
-        {
+        int length() const {
             return this->length_;
         }
+
     private:
         char buf_[32];
         int length_;
     };
 
-    inline log_stream& operator<< (log_stream& s, const fmt & fmt_s)
-    {
+    inline log_stream &operator<<(log_stream &s, const fmt &fmt_s) {
         s.append(fmt_s.data(), fmt_s.length());
         return s;
     }
 
-    inline std::ostream & operator<<(std::ostream & in, const string_piece& p)
-    {
+    inline std::ostream &operator<<(std::ostream &in, const string_piece &p) {
         return in << p.as_string();
     }
-    
+
     string format_SI(int64_t n);
+
     string format_IEC(int64_t n);
 }
 

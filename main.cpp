@@ -1,27 +1,24 @@
 #include <iostream>
-#include <base/weak_callback.h>
-#include <base/thread.h>
-#include "base/exception.h"
-#include "base/current_thead.h"
+#include "base/time_zone.h"
+#include "base/date_t.h"
+#include "base/file_utils.h"
+#include "base/process_info.h"
+#include "base/process_info.h"
+#include "base/log_stream.h"
+#include "base/logging.h"
 
-struct foo
-{
-    void print(int a)
-    {
-        std::cout << a << std::endl;
-    }
-};
+using namespace ac_muduo;
 
 int main() {
-    foo f;
-    ac_muduo::thread t([&]{f.print(10);});
-    t.start();
-    std::cout<< t.name() << std::endl;
-    t.join();
+    time_zone beijing(8 * 3600, "CST");
+    logger::set_time_zone(beijing);
+    logger::set_log_level(logger::log_level_t::TRACE);
 
-    ac_muduo::thread t2([&]{f.print(1);});
-    t2.start();
-    std::cout<< t2.name() << std::endl;
-    t2.join();
-    return 0;
+    LOG_TRACE << "trace NYT";
+    LOG_DEBUG << "debug NYT";
+    LOG_INFO << "Hello NYT";
+    LOG_WARN << "World NYT";
+    LOG_ERROR << "Error NYT";
+    LOG_FATAL << "FATAL NYT";
+
 }
