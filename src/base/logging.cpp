@@ -85,17 +85,17 @@ namespace ac_muduo {
 namespace ac_muduo {
 
     logger::impl::impl(log_level
-    level,
-    int old_errno,
-    const source_file &file,
-    int line
+                       level,
+                       int old_errno,
+                       const source_file &file,
+                       int line
     ) :
 
-    time_ (timestamp::now()),
-    stream_(),
-    level_(level),
-    line_(line),
-    base_name_(file) {
+            time_(timestamp::now()),
+            stream_(),
+            level_(level),
+            line_(line),
+            base_name_(file) {
         this->format_time();
         current_thread::tid();
         stream_ << T(current_thread::tid_string(), current_thread::tid_string_length());
