@@ -1,46 +1,27 @@
 #include <iostream>
+#include <thread>
+#include "net/event_loop_t.h"
 #include "base/logging.h"
-#include "base/async_logging.h"
 
-using namespace ac_muduo;
-
-async_logging g_asyc_log("test_demo", 10000*1000, 3);
-
-void print_log(const char* data, int len)
+void print(int value)
 {
-    g_asyc_log.append(data,len);
-}
-void flush()
-{
+    LOG_TRACE << "value: " << value;
 }
 
+int main(int argc, char**argv)
+{
+    ac_muduo::logger::set_log_level(ac_muduo::logger::TRACE);
+    ac_muduo::net::event_loop_t event_loop;
 
-int main() {
-    char * data = "0123456789abcdefghijklmnopqrstuvwxyz;!@#$%^&";
-    g_asyc_log.start();
-
-
-    logger::set_output_fun(print_log);
-    logger::set_flush(flush);
-    logger::set_log_level(logger::log_level_t::TRACE);
-
-
-    char buf[11];
-    for(int i = 0; i != 1000*1000; ++i)
-    {
-        for(int j= 0; j!= sizeof(buf)-2; ++j)
+    std::thread([&]{
+        for(int i = 0; i!=10; ++i)
         {
-           buf[j] = data [ random() %(strlen(data))];
+            event_loop.queue_in_loop([i]{ print(i);});
+            sleep(1);
         }
 
-        buf[sizeof(buf)-2]=0;
-        buf[sizeof(buf)-1]=0;
+        event_loop.quit();
+    }).detach();
 
-        LOG_INFO << string_piece(buf, strlen(buf)) ;
-        usleep(500);
-
-    }
-
-
-
+    event_loop.loop();
 }

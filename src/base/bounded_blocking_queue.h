@@ -77,7 +77,7 @@ namespace ac_muduo {
         mutable std::mutex mutex_;
         std::condition_variable not_empty_;
         std::condition_variable not_full_;
-        boost::circular_buffer<T> queue_;
+        boost::circular_buffer <T> queue_;
 
     };
 
