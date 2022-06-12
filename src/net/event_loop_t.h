@@ -12,12 +12,12 @@
 #include "base/current_thead.h"
 #include "base/timestamp.h"
 #include "base/noncopyable.h"
-
+#include "timer_id_t.h"
 
 namespace ac_muduo::net {
     class channel_t;
-
     class poller_t;
+    class timer_queue_t;
 
     class event_loop_t : public noncopyable {
 
@@ -45,6 +45,11 @@ namespace ac_muduo::net {
         void queue_in_loop(functor_t cb);
 
         size_t queue_size() const;
+
+        timer_id_t run_at(timestamp time, std::function<void()> cb);
+        timer_id_t run_after(double delay, std::function<void()> cb);
+        timer_id_t run_every(double delay, std::function<void()> cb);
+        void cancel(timer_id_t timer_id);
 
         void wakeup();
 
@@ -102,6 +107,7 @@ namespace ac_muduo::net {
         const pid_t thread_id_;
         timestamp poll_return_time_;
         std::unique_ptr<poller_t> poller_;
+        std::unique_ptr<timer_queue_t> timer_queue_;
 
         int wakeup_fd_;
         std::unique_ptr<channel_t> wakeup_channel_;

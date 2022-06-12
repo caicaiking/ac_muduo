@@ -11,6 +11,7 @@
 #include <sys/eventfd.h>
 #include <unistd.h>
 #include <csignal>
+#include "timer_queue_t.h"
 
 
 namespace ac_muduo::net {
@@ -47,6 +48,7 @@ namespace ac_muduo::net {
             iteration_(0),
             thread_id_(current_thread::tid()),
             poller_(poller_t::new_default_poller(this)),
+            timer_queue_(new timer_queue_t(this)),
             wakeup_fd_(create_eventfd()),
             wakeup_channel_(new channel_t(this, wakeup_fd_)),
             current_active_channel_(nullptr) {
@@ -151,12 +153,12 @@ namespace ac_muduo::net {
     void event_loop_t::remove_channel(channel_t *channel) {
         assert(channel->owner_loop() == this);
         this->assert_in_loop_thread();
-        if(this->event_handling_)
-        {
+        if (this->event_handling_) {
             assert(
                     this->current_active_channel_ == channel ||
-                    std::find(this->active_channels_.begin(), this->active_channels_.end(), channel) == active_channels_.end()
-                    );
+                    std::find(this->active_channels_.begin(), this->active_channels_.end(), channel) ==
+                    active_channels_.end()
+            );
         }
         this->poller_->remove_channel(channel);
     }
@@ -172,9 +174,9 @@ namespace ac_muduo::net {
     }
 
     void event_loop_t::abort_not_in_loop_thread() {
-        LOG_FATAL << "event_loop::abort_not_in_loop_thread - event_loop " <<this
-        << " was created in thread_id_ = " << this->thread_id_
-        << ", current thread id = " << current_thread::tid();
+        LOG_FATAL << "event_loop::abort_not_in_loop_thread - event_loop " << this
+                  << " was created in thread_id_ = " << this->thread_id_
+                  << ", current thread id = " << current_thread::tid();
     }
 
     void event_loop_t::handle_read() {
@@ -205,5 +207,23 @@ namespace ac_muduo::net {
         for (const auto &channel: this->active_channels_) {
             LOG_TRACE << "{" << channel->revent_to_string() << "} ";
         }
+    }
+
+    timer_id_t event_loop_t::run_at(timestamp time, std::function<void()> cb) {
+        return this->timer_queue_->add_timer(std::move(cb), time, .0);
+    }
+
+    timer_id_t event_loop_t::run_after(double delay, std::function<void()> cb) {
+        timestamp time(add_time(timestamp::now(), delay));
+        return this->run_at(time, std::move(cb));
+    }
+
+    timer_id_t event_loop_t::run_every(double interval, std::function<void()> cb) {
+        timestamp time(add_time(timestamp::now(), interval));
+        return this->timer_queue_->add_timer(std::move(cb), time, interval);
+    }
+
+    void event_loop_t::cancel(timer_id_t timer_id) {
+        this->timer_queue_->cancel(timer_id);
     }
 }
