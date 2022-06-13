@@ -3,29 +3,15 @@
 #include "net/event_loop_thread_t.h"
 #include "net/event_loop_t.h"
 #include "base/logging.h"
+#include "net/sockets_ops.h"
 
-void print(int value) {
-    LOG_TRACE << "value: " << value;
-}
-
-void init_fun(ac_muduo::net::event_loop_t * t)
-{
-    LOG_INFO << "init function";
-}
 
 int main(int argc, char **argv) {
-    ac_muduo::logger::set_log_level(ac_muduo::logger::TRACE);
-    ac_muduo::net::event_loop_thread_t thread(init_fun);
-    auto event_loop = thread.start_loop();
+    sockaddr_in addr;
+    ac_muduo::net::sockets::from_ip_port("192.169.1.1", 5000, &addr);
 
-    std::thread([&] {
+    char buf[255];
+    ac_muduo::net::sockets::to_ip_port(buf, sizeof buf, ac_muduo::net::sockets::sockaddr_cast(&addr));
 
-        event_loop->run_every(1, [] { print(1); });
-        event_loop->run_after(6, [] { print(6); });
-        sleep(20);
-        event_loop->quit();
-
-    }).detach();
-
-    sleep(30);
+    std::cout << buf << std::endl;
 }
